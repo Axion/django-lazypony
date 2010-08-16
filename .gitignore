@@ -1,0 +1,15 @@
+anon_ftp
+cgi-bin
+error_docs
+pd
+private
+statistics
+subdomains
+tmp
+web_users
+*.pyc
+*~
+.svn
+.DS_Store
+.hg
+nbproject/
