@@ -2,5 +2,8 @@
 # and open the template in the editor.
 
 __author__="PyKaB"
-__date__ ="$17.08.2010 10:42:40$"
+__date__ ="$16.08.2010 12:36:48$"
 
+DEPENDENCIES = (
+    'django'
+)

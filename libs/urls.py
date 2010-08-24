@@ -4,5 +4,3 @@
 __author__="PyKaB"
 __date__ ="$17.08.2010 10:42:47$"
 
-if __name__ == "__main__":
-    print "Hello World"

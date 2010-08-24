@@ -1,8 +1,10 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
+VERSION = (0, 0, 1, "alpha")
 __author__="PyKaB"
 __date__ ="$16.08.2010 12:29:27$"
-__version__="0.1 pre-alpha"
+__version_ = VERSION.split('.')
+
 
 from pprint import pprint
 import argparse
@@ -14,11 +16,15 @@ from libs import create_dirs, get_packages_list, check_yes_no, clean_packages_na
 
 
 sys.path.insert(0, os.getcwd())
+sys.path.insert(1, j(os.getcwd(), 'libs'))
 
 DEBUG = True
 
 
 if __name__ == "__main__":
+    from libs.terminate.prompt import query
+    query("Python rocks? ",(True, False))
+
     packages = get_packages_list()
     ipackages = []
 
@@ -86,7 +92,7 @@ if __name__ == "__main__":
     print "------------------------------------------------------------------------------------------------------------------------------------"
     for p in ipackages:
         d = __import__('packages.%s.source' % p, globals(), locals(), 'SOURCE', -1)
-        print "%21s   %20s  %s" % (p, d.SOURCE[3], d.SOURCE[1])
+        print "%-21s    %-20s    %s" % (p, d.SOURCE[3], d.SOURCE[1])
 
     if deps_l:
         print ""
@@ -94,7 +100,7 @@ if __name__ == "__main__":
         print "------------------------------------------------------------------------------------------------------------------------------------"
         for p in deps_l:
             d = __import__('packages.%s.source' % p, globals(), locals(), 'SOURCE', -1)
-            print "%21s   %20s  %s" % (p, d.SOURCE[3], d.SOURCE[1])
+            print "%-21s    %-20s    %s" % (p, d.SOURCE[3], d.SOURCE[1])
 
     print ""
     print "Transaction Summary"
