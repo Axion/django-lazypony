@@ -13,3 +13,4 @@ web_users
 .DS_Store
 .hg
 nbproject/
+.idea
