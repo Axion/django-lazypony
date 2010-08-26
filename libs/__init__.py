@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-__author__="PyKaB"
-__date__ ="$16.08.2010 17:24:56$"
 import os
 from os.path import join as j
 
 def create_dirs(base_path):
     dirs = [
-        'apps',
+        'project',
         'media',
         j('3rdparty', 'apps'),
         j('3rdparty', 'libs'),
@@ -14,9 +12,8 @@ def create_dirs(base_path):
     ]
 
     try:
-        for dir in dirs:
-            pass
-            #os.makedirs( j(base_path, dir) )
+        for dir in dirs:            
+            os.makedirs( j(base_path, dir) )
     except:
         return False
 

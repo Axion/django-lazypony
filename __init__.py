@@ -1,9 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 VERSION = (0, 0, 1, "alpha")
-__author__="PyKaB"
-__date__ ="$16.08.2010 12:29:27$"
-__version_ = VERSION.split('.')
+__version__ = ".".join([str(k) for k in VERSION])
 
 
 from pprint import pprint
@@ -23,7 +21,7 @@ DEBUG = True
 
 if __name__ == "__main__":
     from libs.terminate.prompt import query
-    query("Python rocks? ",(True, False))
+    #query("Python rocks? ",(True, False))
 
     packages = get_packages_list()
     ipackages = []
@@ -44,7 +42,7 @@ if __name__ == "__main__":
     if args.output_dir == '.':
         var = raw_input("Create django project in '%s'? [Y/N] " % os.getcwd())
         if not check_yes_no(var):
-            args.output_dir = raw_input("Directory in which django file names will be created: ")
+            args.output_dir = os.path.normpath(raw_input("Directory in which django file names will be created: "))
 
 
     """
@@ -59,6 +57,49 @@ if __name__ == "__main__":
     if not create_dirs(args.output_dir):
         parser.error('Could\'t create directory "%s"' % args.output_dir)
 
+
+    def tofile(filename, string):
+        file = open("test.bin","w")
+        file.write(string)
+        file.close()
+
+
+    def mreplace(str, dt):
+        for key in dt:
+            str = str.replace("{{ %s }}" % key, dt[key])
+        return str
+
+    def template(filename_from, filename_to, dt):
+        string = open(filename_from,"r").read()
+
+        file = open(filename_to,"w")
+        file.write(mreplace(string, dt))
+        file.close()
+        
+
+    username = os.environ["USERNAME"] if "USERNAME" in os.environ else os.environ["USER"]
+    print ("Generating separated configs for production enviroment and user \"%s\"" % username)
+    var = raw_input("Enter comma-separated usernames if you need additional configs or leave empty:")
+
+    var_timezone = raw_input("Enter TIME_ZONE (empty for default Europe/Moscow):")
+    var_language = raw_input("Enter LANGUAGE_CODE (empty for default ru-ru):")
+
+    base_settings = j(args.output_dir, 'project', "settings.py")
+    user_settings = j(args.output_dir, 'project', "settings_%s.py" % (username,))
+    production_settings = j(args.output_dir, 'project',"settings_production.py")
+
+    template(j(os.getcwd(), 'res', 'base_settings.py'), base_settings, {'document_root' : args.output_dir+os.sep})
+    template(j(os.getcwd(), 'res', 'user_settings.py'), user_settings, [])
+    template(j(os.getcwd(), 'res', 'user_settings.py'), production_settings, [])
+
+    additional_usernames = var.strip().split(",")
+    for username in additional_username:
+        #tofile()
+        pass
+
+
+
+    """
     if args.install is None:
         for p in packages:
             if p == 'django': continue
@@ -110,3 +151,5 @@ if __name__ == "__main__":
     if not check_yes_no(var):
         print "Aborted"
         sys.exit()
+
+    """
