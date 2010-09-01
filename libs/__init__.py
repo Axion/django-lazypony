@@ -9,6 +9,8 @@ def create_dirs(base_path):
         j('3rdparty', 'apps'),
         j('3rdparty', 'libs'),
         j('3rdparty', 'packages'),
+        j('project', 'conf', 'platform'),
+        j('project', 'conf', 'packages'),
     ]
 
     try:

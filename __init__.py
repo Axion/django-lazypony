@@ -8,6 +8,8 @@ from pprint import pprint
 import argparse
 import os
 import sys
+import re
+import subprocess
 from os.path import join as j
 
 from libs import create_dirs, get_packages_list, check_yes_no, clean_packages_names
@@ -32,13 +34,27 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--output-dir', help='Directory in which django file names will be created (default ".")', default='.', metavar='dest-dir')
     parser.add_argument('-i', '--install', help='List packegages to install', metavar='install-list')
     parser.add_argument('-p', '--show-packages', help='Show all available packages', action='version', version=" ".join(packages) )
-    
+    parser.add_argument('-f', '--full', help='Install everything', action="store_true", default=False, dest="full_install")
 
     try:
         args = parser.parse_args()
     except IOError, msg:
         parser.error(str(msg))
 
+    try:    
+        pip_info = subprocess.Popen(['pip','--version'], stdout=subprocess.PIPE,).communicate()[0]
+        pip_version = re.search('pip (.*?) ', pip_info).group(1)
+        print pip_version
+    except:
+        print "pip not installed"
+        sys.exit(1)
+        
+    try:    
+        virtualenv_version = subprocess.Popen(['virtualenv','--version'], stdout=subprocess.PIPE,).communicate()[0]
+    except:
+        print "virtualenv not installed"        
+        sys.exit(1)
+            
     if args.output_dir == '.':
         var = raw_input("Create django project in '%s'? [Y/N] " % os.getcwd())
         if not check_yes_no(var):
@@ -88,19 +104,19 @@ if __name__ == "__main__":
     user_settings = j(args.output_dir, 'project', "settings_%s.py" % (username,))
     production_settings = j(args.output_dir, 'project',"settings_production.py")
 
-    template(j(os.getcwd(), 'res', 'base_settings.py'), base_settings, {'document_root' : args.output_dir+os.sep})
     template(j(os.getcwd(), 'res', 'user_settings.py'), user_settings, [])
     template(j(os.getcwd(), 'res', 'user_settings.py'), production_settings, [])
 
     additional_usernames = var.strip().split(",")
-    for username in additional_username:
-        #tofile()
-        pass
+    for username in additional_usernames:
+        user_settings = j(args.output_dir, 'project', "settings_%s.py" % (username,))
+        template(j(os.getcwd(), 'res', 'user_settings.py'), user_settings, [])
 
+    template(j(os.getcwd(), 'res', 'base_settings.py'), base_settings, {'document_root' : args.output_dir+os.sep})
 
-
-    """
-    if args.install is None:
+    if args.full_install:
+        ipackages = packages
+    elif args.install is None:
         for p in packages:
             if p == 'django': continue
             var = raw_input( "Install '%s'? [Y/N] " % p )
@@ -152,4 +168,15 @@ if __name__ == "__main__":
         print "Aborted"
         sys.exit()
 
-    """
+
+    print "Generating requerements.pip file"
+    for d in deps_l:
+        print "%-21s    %-20s    %s" % (p, d.SOURCE[3], d.SOURCE[1])
+
+
+    for p in ipackages:
+        #print "%-21s    %-20s    %s" % (d.SOURCE[3], d.SOURCE[1])
+        d = __import__('packages.%s.source' % p, globals(), locals(), 'SOURCE', -1)
+        print "-e %s+%s#%segg=%s" % (d.SOURCE[0], d.SOURCE[1], d.SOURCE[3], d.SOURCE[2])
+        #print "%-21s    %-20s    %s" % (p, d.SOURCE[3], d.SOURCE[1])
+

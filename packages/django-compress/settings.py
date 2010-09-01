@@ -1,5 +1,3 @@
-SETTINGS['base'] = """
-
 COMPRESS_VERSION = True
 COMPRESS_AUTO = False
 
@@ -21,15 +19,8 @@ COMPRESS_CSS = {
         'output_filename': 'html/css/all_compressed.r?.css',
     }        
 }
-"""
 
-SETTINGS['user'] = """
-COMPRESS = False
-"""
-
-SETTINGS['production'] = """
-COMPRESS = True
-"""
+COMPRESS = PRODUCTION
 
 
 
